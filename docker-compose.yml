@@ -7,8 +7,8 @@ services:
     ports:
       - 8096:8096
     volumes:
-      - ./jellyfin/config:/config
-      - ./jellyfin/cache:/cache
+      - /home/bogdan/media-server/services/jellyfin/config:/config
+      - /home/bogdan/media-server/services/jellyfin/cache:/cache
       - "${TVDIR}:/media/tv"
       - "${MOVIESDIR}:/media/movies"
       - /etc/localtime:/etc/localtime:ro
@@ -17,7 +17,7 @@ services:
       - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN}`)"
   sonarr:
     container_name: sonarr
-    image: linuxserver/sonarr:preview
+    image: linuxserver/sonarr
     restart: unless-stopped
     ports:
       - 8989:8989
@@ -26,7 +26,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ./sonarr:/config
+      - /home/bogdan/media-server/services/sonarr:/config
       - ${DLDIR}/completed:/downloads/completed
       - ${TVDIR}:/tv
       - /etc/localtime:/etc/localtime:ro
@@ -46,7 +46,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ./radarr:/config
+      - /home/bogdan/media-server/services/radarr:/config
       - ${DLDIR}/completed:/downloads/completed
       - ${MOVIESDIR}:/movies
       - /etc/localtime:/etc/localtime:ro
@@ -55,23 +55,6 @@ services:
       - deluge
     labels:
       - "traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)"
-  ombi:
-    image: linuxserver/ombi
-    container_name: ombi
-    restart: unless-stopped
-    ports:
-      - 3579:3579
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-    volumes:
-      - ./ombi:/config
-      - /etc/localtime:/etc/localtime:ro
-    labels:
-      - "traefik.http.routers.ombi.rule=Host(`ombi.${DOMAIN}`)"
-    depends_on:
-      - radarr
-      - sonarr
   deluge:
     image: linuxserver/deluge
     container_name: deluge
@@ -86,7 +69,7 @@ services:
       - TZ=Europe/London
     volumes:
       - ${DLDIR}:/downloads
-      - ./deluge:/config
+      - /home/bogdan/media-server/services/deluge:/config
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     labels:
@@ -101,7 +84,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     volumes:
-      - ./jackett:/config
+      - /home/bogdan/media-server/services/jackett:/config
       - ${DLDIR}/completed:/downloads
       - /etc/localtime:/etc/localtime:ro
     labels:
@@ -112,7 +95,7 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - TZ=Europe/London
+      - TZ=Europe/Bucharest
     volumes:
       - ./heimdall:/config
     ports:
